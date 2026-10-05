@@ -7,6 +7,11 @@ RUN install-php-extensions \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+COPY docker-entrypoint.sh /usr/local/bin/beezkit-entrypoint
+RUN chmod +x /usr/local/bin/beezkit-entrypoint
+
 COPY . /app
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+ENTRYPOINT ["beezkit-entrypoint"]
+
+CMD ["php", "artisan", "octane:frankenphp"]
