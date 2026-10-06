@@ -1,0 +1,46 @@
+name: beezkit
+
+services:
+  app:
+    build:
+      context: .
+    command: php artisan octane:frankenphp --workers=1 --max-requests=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      APP_URL: https://beezkit.local
+      OCTANE_HTTPS: true
+      DB_HOST: mysql
+      DB_PORT: 3306
+    labels:
+      - dev.orbstack.domains=beezkit.local
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mysql:
+
+networks:
+  default:
+    name: beezkit-net
