@@ -1,0 +1,36 @@
+name: Commit lint
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  commit-lint:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          failed=0
+          message_file=$(mktemp)
+          for sha in $(git rev-list --no-merges "$BASE_SHA..$HEAD_SHA"); do
+            git log -1 --format=%B "$sha" > "$message_file"
+            set +e
+            .githooks/lint-commit-message "$message_file"
+            status=$?
+            set -e
+            if [ "$status" -eq 1 ]; then
+              echo "::error::Commit $sha does not follow Conventional Commits"
+              failed=1
+            fi
+          done
+          exit "$failed"

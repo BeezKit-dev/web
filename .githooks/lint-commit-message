@@ -1,0 +1,34 @@
+#!/bin/sh
+# Validates a commit message file against Conventional Commits.
+# Exit codes: 0 valid, 1 invalid, 3 exempt (merge, revert, fixup commits).
+# Used by the commit-msg hook and by the commit lint workflow in CI.
+
+message_file="$1"
+subject=$(grep -v '^#' "$message_file" | sed -n '1p')
+
+case "$subject" in
+    "Merge "*|"Revert \""*|"fixup! "*|"squash! "*|"amend! "*)
+        exit 3
+        ;;
+esac
+
+types="feat|fix|perf|refactor|docs|test|build|ci|chore|style|revert"
+pattern="^($types)(\([a-z0-9._/-]+\))?!?: .+"
+
+if ! printf '%s' "$subject" | grep -Eq "$pattern"; then
+    cat >&2 <<MSG
+Commit message does not follow Conventional Commits.
+
+  $subject
+
+Expected: <type>(<optional scope>)<optional !>: <description>
+Types:    feat, fix, perf, refactor, docs, test, build, ci, chore, style, revert
+Example:  feat(tenant): add tenant model
+MSG
+    exit 1
+fi
+
+if [ "${#subject}" -gt 100 ]; then
+    echo "Commit subject is longer than 100 characters: $subject" >&2
+    exit 1
+fi
