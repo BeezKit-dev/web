@@ -1,0 +1,33 @@
+#!/bin/sh
+# Rejects commit messages that don't follow Conventional Commits.
+# Enable with: git config core.hooksPath .githooks (done by `composer run setup`).
+
+message_file="$1"
+subject=$(grep -v '^#' "$message_file" | sed -n '1p')
+
+case "$subject" in
+    "Merge "*|"Revert \""*|"fixup! "*|"squash! "*|"amend! "*)
+        exit 0
+        ;;
+esac
+
+types="feat|fix|perf|refactor|docs|test|build|ci|chore|style|revert"
+pattern="^($types)(\([a-z0-9._/-]+\))?!?: .+"
+
+if ! printf '%s' "$subject" | grep -Eq "$pattern"; then
+    cat >&2 <<MSG
+Commit message does not follow Conventional Commits.
+
+  $subject
+
+Expected: <type>(<optional scope>)<optional !>: <description>
+Types:    feat, fix, perf, refactor, docs, test, build, ci, chore, style, revert
+Example:  feat(tenant): add tenant model
+MSG
+    exit 1
+fi
+
+if [ "${#subject}" -gt 100 ]; then
+    echo "Commit subject is longer than 100 characters." >&2
+    exit 1
+fi
