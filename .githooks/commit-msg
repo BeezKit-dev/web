@@ -1,5 +1,6 @@
 #!/bin/sh
-# Rejects commit messages that don't follow Conventional Commits.
+# Rejects commit messages that don't follow Conventional Commits,
+# then runs the Pint check on staged PHP files (skipped if the message is invalid).
 # Enable with: git config core.hooksPath .githooks (done by `composer run setup`).
 
 message_file="$1"
@@ -31,3 +32,5 @@ if [ "${#subject}" -gt 100 ]; then
     echo "Commit subject is longer than 100 characters." >&2
     exit 1
 fi
+
+exec "$(dirname "$0")/pint-check"

@@ -1,5 +1,6 @@
 #!/bin/sh
-# Blocks the commit when staged PHP files violate the Pint code style.
+# Fails when staged PHP files violate the Pint code style.
+# Run by the commit-msg hook after the message is validated.
 # Fix with: vendor/bin/pint --dirty
 
 files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php')
