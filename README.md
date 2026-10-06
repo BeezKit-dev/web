@@ -1,58 +1,66 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BeezKit
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+BeezKit is a batteries-included, open-source point-of-sale (POS) system. Merchants add their products and prices, ring up sales, and keep track of what they sold and how much they made.
 
-## About Laravel
+It starts as a simple POS for a single shop and is designed to grow, through built-in modules, into a full ERP for anything from a market stall to a multi-branch business.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> **Status:** early development. The web MVP is being built and isn't ready for real use yet.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Built for Malaysia first:** MYR currency, English and Bahasa Melayu, and local payment methods (cash and QR).
+- **Open to the world:** currency is a setting, translations are file-based, and payment methods are pluggable, so contributors can add their own.
+- **Grows with the business:** stock, tax, receipts, branches and ERP features come as built-in modules you switch on.
 
-## Learning Laravel
+## Tech stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- [Laravel](https://laravel.com) with [Livewire](https://livewire.laravel.com) and [Alpine.js](https://alpinejs.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [FrankenPHP](https://frankenphp.dev) with [Laravel Octane](https://laravel.com/docs/octane)
+- MySQL
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Running locally
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### With Docker
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+You need [Docker](https://www.docker.com) ([OrbStack](https://orbstack.dev) is recommended on macOS) and [Node.js](https://nodejs.org).
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone git@github.com:BeezKit-dev/web.git beezkit
+cd beezkit
+cp .env.example .env
+npm install
+npm run build
+docker compose up -d --build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+On its first start, the `app` container installs the Composer dependencies, generates `APP_KEY` and runs the migrations. Follow along with `docker compose logs -f app`.
 
-## Contributing
+With OrbStack, the app is served at <https://beezkit.local>.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+MySQL is available on `127.0.0.1:3306` with the credentials from your `.env`. The default local password is `secret`, so change it before exposing the database anywhere.
 
-## Code of Conduct
+### With Laravel Herd
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+You need [Laravel Herd](https://herd.laravel.com) (PHP 8.5), Node.js and a MySQL server that matches the `DB_*` settings in `.env`.
 
-## Security Vulnerabilities
+```bash
+composer run setup
+composer run dev
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`composer run setup` installs dependencies, creates `.env`, generates `APP_KEY`, runs the migrations and builds the frontend. `composer run dev` starts the development processes, including Vite.
+
+## Running the tests
+
+```bash
+php artisan test --compact
+```
+
+## Translations
+
+UI text lives in `lang/`. Short strings go in `lang/ms.json`, and Laravel's built-in messages are in `lang/ms/*.php`. Contributions for other languages are welcome.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+BeezKit is open-source software licensed under the [GNU Affero General Public License v3.0](LICENSE). If you run a modified version of BeezKit as an online service, you must make your source code available to its users.
