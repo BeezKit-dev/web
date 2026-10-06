@@ -1,0 +1,19 @@
+#!/bin/sh
+# Fails when the Pest test suite fails. Skipped when no PHP files are staged.
+# Run by the commit-msg hook after the Larastan check.
+# Run manually with: composer run test
+
+if [ -z "$(git diff --cached --name-only --diff-filter=ACMR -- '*.php')" ]; then
+    exit 0
+fi
+
+if [ ! -x vendor/bin/pest ]; then
+    echo "vendor/bin/pest not found. Run composer install." >&2
+    exit 1
+fi
+
+if ! vendor/bin/pest --compact; then
+    echo >&2
+    echo "Pest tests failed. Fix them and commit again." >&2
+    exit 1
+fi
