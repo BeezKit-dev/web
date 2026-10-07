@@ -1,0 +1,21 @@
+#!/bin/sh
+# Rejects commit messages that don't follow Conventional Commits,
+# then runs the Pint, Larastan and Pest checks (all skipped if the message is invalid).
+# Enable with: git config core.hooksPath .githooks (done by `composer run setup`).
+
+hooks_dir=$(dirname "$0")
+
+"$hooks_dir/lint-commit-message" "$1"
+status=$?
+
+if [ "$status" -eq 3 ]; then
+    exit 0
+fi
+
+if [ "$status" -ne 0 ]; then
+    exit 1
+fi
+
+"$hooks_dir/pint-check" || exit 1
+"$hooks_dir/phpstan-check" || exit 1
+"$hooks_dir/pest-check" || exit 1

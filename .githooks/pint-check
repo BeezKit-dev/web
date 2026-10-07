@@ -1,0 +1,22 @@
+#!/bin/sh
+# Fails when staged PHP files violate the Pint code style.
+# Run by the commit-msg hook after the message is validated.
+# Fix with: vendor/bin/pint --dirty
+
+files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php')
+
+if [ -z "$files" ]; then
+    exit 0
+fi
+
+if [ ! -x vendor/bin/pint ]; then
+    echo "vendor/bin/pint not found. Run composer install." >&2
+    exit 1
+fi
+
+# shellcheck disable=SC2086
+if ! vendor/bin/pint --test $files; then
+    echo >&2
+    echo "Pint found style violations. Run vendor/bin/pint --dirty, stage the changes and commit again." >&2
+    exit 1
+fi

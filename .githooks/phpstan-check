@@ -1,0 +1,19 @@
+#!/bin/sh
+# Fails when Larastan finds errors. Skipped when no PHP files are staged.
+# Run by the commit-msg hook after the Pint check.
+# Run manually with: composer run analyse
+
+if [ -z "$(git diff --cached --name-only --diff-filter=ACMR -- '*.php')" ]; then
+    exit 0
+fi
+
+if [ ! -x vendor/bin/phpstan ]; then
+    echo "vendor/bin/phpstan not found. Run composer install." >&2
+    exit 1
+fi
+
+if ! vendor/bin/phpstan analyse --no-progress --memory-limit=1G; then
+    echo >&2
+    echo "Larastan found errors. Fix them and commit again." >&2
+    exit 1
+fi
