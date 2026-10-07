@@ -9,7 +9,7 @@ All notable changes to this project are documented in this file.
 """
 body = """
 {%- macro remote_url() -%}
-  https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+  https://github.com/BeezKit-dev/web
 {%- endmacro -%}
 
 {% if version -%}
@@ -52,7 +52,3 @@ commit_parsers = [
   { message = "^revert", group = "<!-- 09 -->Reverts" },
   { message = "^chore", group = "<!-- 10 -->Miscellaneous" },
 ]
-
-[remote.github]
-owner = "BeezKit-dev"
-repo = "web"
