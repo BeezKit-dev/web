@@ -57,6 +57,39 @@ composer run dev
 php artisan test --compact
 ```
 
+## Contributing
+
+### Code quality
+
+```bash
+vendor/bin/pint            # fix code style
+composer run analyse       # Larastan static analysis
+php artisan test --compact # Pest tests
+```
+
+CI runs Pint, Larastan and Pest on every pull request and on every push to `main`.
+
+### Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org): `<type>(<optional scope>): <description>`, for example `feat(tenant): add tenant model`.
+
+Allowed types: `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `build`, `ci`, `chore`, `style`, `revert`. Add `!` after the type for a breaking change. Pull request titles are plain sentences and don't need a prefix.
+
+### Git hooks
+
+`composer run setup` enables the hooks in `.githooks` (`git config core.hooksPath .githooks`). On every commit, the `commit-msg` hook checks the message first, then runs Pint, Larastan and Pest. Pint, Larastan and Pest only run when PHP files are staged. If the message is invalid, nothing else runs. Use `git commit --no-verify` to skip the hooks in an emergency; CI still checks the same things.
+
+### Releases
+
+Releases are cut by pushing a version tag from `main`:
+
+```bash
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+The release workflow then uses [git-cliff](https://git-cliff.org) (configured in `cliff.toml`) to build the release notes from the commit messages and publish a GitHub Release. It also regenerates `CHANGELOG.md` and commits it to `main`. A tag with a suffix, such as `v1.0.0-beta.1`, is published as a pre-release.
+
 ## Translations
 
 UI text lives in `lang/`. Short strings go in `lang/ms.json`, and Laravel's built-in messages are in `lang/ms/*.php`. Contributions for other languages are welcome.
