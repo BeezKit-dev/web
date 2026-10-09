@@ -32,6 +32,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine whether registration is still open.
+     *
+     * An install has a single owner, so registration closes once any user exists.
+     */
+    public static function registrationIsOpen(): bool
+    {
+        return ! static::query()->exists();
+    }
+
+    /**
      * Get the tenant the user belongs to.
      *
      * @return BelongsTo<Tenant, $this>
