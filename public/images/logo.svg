@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Solid Black Base Body -->
+  <polygon points="250,50 423.2,150 423.2,350 250,450 76.8,350 76.8,150" fill="#000000" />
+  
+  <!-- Negative Space Carved Channels -->
+  <circle cx="250" cy="250" r="32" fill="#ffffff" />
+  <line x1="250" y1="250" x2="423.2" y2="150" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+  <line x1="250" y1="250" x2="76.8" y2="350" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+  <line x1="250" y1="250" x2="250" y2="450" stroke="#ffffff" stroke-width="20" stroke-linecap="round" />
+</svg>
